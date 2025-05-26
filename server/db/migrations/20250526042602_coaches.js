@@ -2,20 +2,20 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = (knex) => {
-  return knex.schema.createTable("players", (table) => {
+exports.up = function (knex) {
+  return knex.schema.createTable("coaches", (table) => {
     table.increments("id").primary();
+    table.string("name", 100).notNullable();
+    table.string("email", 250).notNullable().unique();
+    table.string("password_hash").notNullable(); // hashed password
+    table.string("photo_url"); // This stores the Azure URL
     table
       .integer("team_id")
       .unsigned()
       .references("id")
       .inTable("teams")
       .onDelete("CASCADE");
-    table.string("name", 100).notNullable();
-    table.string("position", 20).notNullable();
-    table.date("birth_date").notNullable();
-    table.string("password_hash").notNullable();
-    table.string("photo_url"); // This stores the Azure URL
+
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.timestamp("updated_at").defaultTo(knex.fn.now());
   });
@@ -25,4 +25,6 @@ exports.up = (knex) => {
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = (knex) => knex.schema.dropTable("players");
+exports.down = function (knex) {
+  knex.schema.dropTable("coaches");
+};
