@@ -1,16 +1,53 @@
-const User = require('../../models/User');
+const User = require("../../models/User");
+const bcrypt = require("bcrypt");
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.seed = async (knex) => {
-  await knex('users').del();
+exports.seed = async function (knex) {
+  // Deletes ALL existing entries
+  await knex("users").del();
 
-  // resets user_id to 1 each time the seed file is executed.
-  await knex.raw('ALTER SEQUENCE users_id_seq RESTART WITH 1');
+  // Create password hashes
+  const password = "123";
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-  // We could use `knex.raw` queries to create these users but we'll use the model
-  await User.create('cool_cat', '1234');
-  await User.create('l33t-guy', '1234');
-  await User.create('wowow', '1234');
+  // Insert 1 coach
+  await knex("users").insert([
+    {
+      name: "Coach Garcia",
+      email: "coach@statboost.com",
+      password_hash: hashedPassword,
+      role: "coach",
+      created_at: new Date(),
+    },
+    {
+      name: "Player One",
+      email: "player1@statboost.com",
+      password_hash: hashedPassword,
+      role: "player",
+      created_at: new Date(),
+    },
+    {
+      name: "Player Two",
+      email: "player2@statboost.com",
+      password_hash: hashedPassword,
+      role: "player",
+      created_at: new Date(),
+    },
+    {
+      name: "Player Three",
+      email: "player3@statboost.com",
+      password_hash: hashedPassword,
+      role: "player",
+      created_at: new Date(),
+    },
+    {
+      name: "Player Four",
+      email: "player4@statboost.com",
+      password_hash: hashedPassword,
+      role: "player",
+      created_at: new Date(),
+    },
+  ]);
 };

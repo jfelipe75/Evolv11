@@ -3,21 +3,23 @@
  * @returns { Promise<void> }
  */
 exports.up = function (knex) {
-  return knex.schema.createTable("coaches", (table) => {
+  return knex.schema.createTable("lineups", function (table) {
     table.increments("id").primary();
-    table.string("name", 100).notNullable();
-    table.string("email", 250).notNullable().unique();
-    table.string("password_hash").notNullable(); // hashed password
-    table.string("photo_url"); // This stores the Azure URL
+    table
+      .integer("match_id")
+      .unsigned()
+      .references("id")
+      .inTable("matches")
+      .onDelete("CASCADE");
     table
       .integer("team_id")
       .unsigned()
       .references("id")
       .inTable("teams")
       .onDelete("CASCADE");
+    table.string("formation"); // e.g., "4-3-3"
 
     table.timestamp("created_at").defaultTo(knex.fn.now());
-    table.timestamp("updated_at").defaultTo(knex.fn.now());
   });
 };
 
@@ -26,5 +28,5 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  knex.schema.dropTable("coaches");
+  return knex.schema.dropTable("lineups");
 };
